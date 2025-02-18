@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" class="light dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cámara - App</title>
+
+    <script src="js/registraServiceWorker.js"></script>
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#fffbfe">
+    <link rel="icon" sizes="32x32" href="favicon.ico">
+    <link rel="manifest" href="site.webmanifest">
+    <script src="ungap/custom-elements.js"></script>
+    <script type="module" src="js/configura.js"></script>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/transicion_completa.css">
+    <link rel="expect" blocking="render" href="#navbar">
+</head>
+
+
+<body style="padding-bottom: 5rem;">
+    <h1 id="headline">Cámara</h1>
+
+    <nav-tab-fixed id="tab"></nav-tab-fixed>
+
+
+    </md-top-app-bar>
+
+    <main>
+        <p>Para grabar o capturar imagen, cliquea <strong>Inicia</strong>.</p>
+        <p>Para grabar por 5 segundos cliquea <strong>Graba</strong> y luego <strong>Para</strong> para detener.</p>
+        <p>Para capturar una imagen de la cámara, cliquea <strong>Captura</strong>.</p>
+
+        <md-list>
+            <md-list-item>
+                <p>
+                    <button class="md-filled-button" style="width: 100%;" onclick="inicia()">Inicia</button>
+                </p>
+            </md-list-item>
+            <md-list-item>
+                <p>
+                    <button class="md-filled-button" style="width: 100%;" onclick="graba()">Graba</button>
+                </p>
+            </md-list-item>
+            <md-list-item>
+                <p>
+                    <button class="md-filled-button" style="width: 100%;" onclick="para()">Para</button>
+                </p>
+            </md-list-item>
+            <md-list-item>
+                <p>
+                    <button class="md-filled-button" style="width: 100%;" onclick="captura()">Captura</button>
+                </p>
+            </md-list-item>
+        </md-list>
+
+        <md-card>
+            <h2>Preview</h2>
+            <video id="preview" width="100%" autoplay muted></video>
+        </md-card>
+
+        <md-card>
+            <h2>Recording</h2>
+            <video id="recording" width="100%" controls></video>
+            <p><a id="descarga">Descarga</a></p>
+            <div id="mensajes"></div>
+        </md-card>
+
+        <md-card>
+            <h2>Imagen</h2>
+            <canvas id="canvas"></canvas>
+            <p><a id="descargaImagen">Descarga</a></p>
+        </md-card>
+    </main>
+
+    <script>
+        let stream = null;
+        let TIEMPO_DE_GRABACION = 5000;
+        var context = canvas.getContext('2d');
+
+        async function inicia() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+                preview.srcObject = stream;
+                preview.captureStream = preview.captureStream || preview.mozCaptureStream;
+                await new Promise(resolve => preview.onplaying = resolve);
+            } catch (e) {
+                log(e.message);
+            }
+        }
+
+        async function graba() {
+            try {
+                const recordedChunks = await grabaClip(stream, TIEMPO_DE_GRABACION);
+                let recordedBlob = new Blob(recordedChunks, {
+                    type: "video/webm"
+                });
+                recording.src = URL.createObjectURL(recordedBlob);
+                descarga.href = recording.src;
+                descarga.download = "RecordedVideo.webm";
+                log("Grabación exitosa: " + recordedBlob.size + " bytes de " + recordedBlob.type);
+            } catch (e) {
+                log(e.message);
+            }
+        }
+
+        function para() {
+            detiene(preview.srcObject);
+        }
+
+        function captura() {
+            // Ajustar el tamaño del canvas al tamaño del video
+            canvas.width = preview.videoWidth;
+            canvas.height = preview.videoHeight;
+
+            // Dibujar el fotograma en el canvas
+            context.drawImage(preview, 0, 0, canvas.width, canvas.height);
+
+            // Generar la imagen para descargar
+            descargaImagen.href = canvas.toDataURL('image/jpeg');
+            descargaImagen.download = "imagen.jpg";
+        }
+
+        function grabaClip(stream, milisegundos) {
+            let recorder = new MediaRecorder(stream);
+            let data = [];
+            recorder.ondataavailable = event => data.push(event.data);
+            recorder.start();
+            log("Grabando por " + (milisegundos / 1000) + " segundos...");
+            let detenido = new Promise((resolve, reject) => {
+                recorder.onstop = resolve;
+                recorder.onerror = event => reject(event.name);
+            });
+            let grabado = espera(milisegundos).then(() => recorder.state === "recording" && recorder.stop());
+            return Promise.all([detenido, grabado]).then(() => data);
+        }
+
+        function detiene(stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        function log(msg) {
+            mensajes.innerHTML += msg + "<br>";
+        }
+
+        function espera(milisegundos) {
+            return new Promise(resolve => setTimeout(resolve, milisegundos));
+        }
+    </script>
+</body>
+
+</html>

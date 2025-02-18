@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" class="light dark">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Archivos y Cámara - App</title>
+
+    <script src="js/registraServiceWorker.js"></script>
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#fffbfe">
+    <link rel="icon" sizes="32x32" href="favicon.ico">
+    <link rel="manifest" href="site.webmanifest">
+    <script src="ungap/custom-elements.js"></script>
+    <script type="module" src="js/configura.js"></script>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/transicion_pestanas.css">
+    <link rel="expect" blocking="render" href="#navbar">
+</head>
+
+<body style="padding-bottom: 5rem;">
+    <h1 id="headline">Archivos</h1>
+
+    <nav-tab-fixed id="tab"></nav-tab-fixed>
+
+    <main>
+        <p>
+            <label for="fotoMovil">Foto de Móvil</label>
+            <span class="md-filled-text-field">
+                <input id="fotoMovil" type="file" accept="image/*" capture="camera">
+            </span>
+        </p>
+
+        <p>
+            <label for="videoMovil">Video de Móvil</label>
+            <span class="md-filled-text-field">
+                <input id="videoMovil" type="file" accept="video/*" capture>
+            </span>
+        </p>
+
+        <p>
+            <label for="archivo">Archivo</label>
+            <span class="md-filled-text-field">
+                <input id="archivo" type="file">
+            </span>
+        </p>
+    </main>
+</body>
+
+</html>
