@@ -6,7 +6,7 @@ export class NavTabFixed extends HTMLElement {
         this.classList.add("md-tab", "fixed")
 
         this.innerHTML = /* HTML */ `
-   <a ${resaltaSiEstasEn(["/gps.html"])} href="gps.html">
+   <a ${resaltaSiEstasEn(["/index.html"])} href="index.html">
     <span class="material-symbols-outlined">location_on</span>
     Gps
    </a>
