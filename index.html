@@ -14,7 +14,7 @@
     <script type="module" src="js/configura.js"></script>
     <link rel="stylesheet" href="css/estilos.css">
     <link rel="stylesheet" href="css/transicion_pestanas.css">
-    <link rel="expect" blocking="render" href="#navtabfixed">
+    <link rel="expect" blocking="render" href="#navbar">
 
 </head>
 
@@ -23,19 +23,22 @@
     <h1 id="headline">GPS</h1>
 
     <nav-tab-fixed id="tab"></nav-tab-fixed>
-    <center>
-        <h1 id="headline">Geolocalización</h1>
+
+    <main>
         <p>
-            <label>
-                Latitud
+            <span class="md-filled-text-field">
+                <label for="latitud" class="floating-label">Latitud</label>
+                <br>
                 <output id="latitud"></output>
-            </label>
+            </span>
         </p>
+
         <p>
-            <label>
-                Longitud
+            <span class="md-filled-text-field">
+                <label for="longitud" class="floating-label">Longitud</label>
+                <br>
                 <output id="longitud"></output>
-            </label>
+            </span>
         </p>
 
         <script>
@@ -47,8 +50,7 @@
                     p.coords.longitude
             });
         </script>
-        </main>
-    </center>
+    </main>
 
 </body>
 
