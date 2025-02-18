@@ -11,7 +11,7 @@ const ARCHIVOS = [
     "archivos.html",
     "ayuda.html",
     "camara.html",
-    "gps.html",
+    "index.html",
     "css/dark-hc.css",
     "css/dark-mc.css",
     "css/dark.css",
